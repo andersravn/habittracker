@@ -4,6 +4,7 @@ import LineChart from "./components/LineChart";
 import { ExportButton } from "./components/ExportButton";
 import { ImportButton } from "./components/ImportButton";
 import { formatDate } from "./utils/formatDate";
+import { getClickTime } from "./utils/getClickTime";
 
 export default function App() {
   const [redButtonLabel, setRedButtonLabel] = useLocalStorage(
@@ -15,56 +16,63 @@ export default function App() {
     "Did it"
   );
   const [editMode, setEditMode] = useState(false);
-  const [editRedCount, setEditRedCount] = useState(false);
-  const [editGreenCount, setEditGreenCount] = useState(false);
 
   const [daysToShow, setDaysToShow] = useState(-30);
   const date = new Date(Date.now());
   const today = formatDate(date);
   const [stats, setStats] = useLocalStorage("myStats", {
     [today]: {
-      red: 0,
-      green: 0,
+      red: [],
+      green: [],
     },
   });
 
   function updateStat(color: string) {
-    if (!stats[today]) {
-      setStats({
-        ...stats,
+    let _stats = { ...stats };
+    if (!_stats[today] || typeof _stats[today][color] === "number") {
+      _stats = {
+        ..._stats,
         [today]: {
-          red: color === "red" ? 1 : 0,
-          green: color === "green" ? 1 : 0,
+          red: color === "red" ? [getClickTime()] : [],
+          green: color === "green" ? [getClickTime()] : [],
         },
-      });
+      };
     }
-    setStats({
-      ...stats,
-      [today]: { ...stats[today], [color]: stats[today][color] + 1 },
-    });
+
+    console.log(_stats);
+
+    _stats = {
+      ..._stats,
+      [today]: {
+        ..._stats[today],
+        [color]: [..._stats[today][color], getClickTime()],
+      },
+    };
+    console.log(_stats);
+
+    setStats(_stats);
   }
 
-  function updateRedCount(event: any) {
+  function undoRedCount() {
     try {
-      const newCount = Number(event.target.value);
       setStats({
         ...stats,
-        [today]: { ...stats[today], ["red"]: newCount },
+        [today]: { ...stats[today], ["red"]: stats[today]["red"].slice(0, -1) },
       });
-      setEditRedCount(false);
     } catch (e) {
       console.log(e);
     }
   }
 
-  function updateGreenCount(event: any) {
+  function undoGreenCount() {
     try {
-      const newCount = Number(event.target.value);
       setStats({
         ...stats,
-        [today]: { ...stats[today], ["green"]: newCount },
+        [today]: {
+          ...stats[today],
+          ["green"]: stats[today]["green"].slice(0, -1),
+        },
       });
-      setEditGreenCount(false);
     } catch (e) {
       console.log(e);
     }
@@ -84,28 +92,18 @@ export default function App() {
           <div className="flex relative justify-between md:flex-col md:items-center">
             <button
               onClick={() => updateStat("red")}
-              className={`bg-red-500 py-4 min-w-[200px] text-lg font-extrabold text-slate-50 rounded px-5 ${
-                editRedCount && "rounded-r-none"
-              }`}
+              className={`bg-red-500 py-4 min-w-[200px] text-lg font-extrabold text-slate-50 rounded px-5`}
             >
               {redButtonLabel}
             </button>
-            {editRedCount ? (
-              <input
-                type="number"
-                autoFocus
-                className="w-12 text-2xl text-center border-red-500 border-2 rounded-r"
-                defaultValue={stats[today]?.red}
-                onBlur={updateRedCount}
-              />
-            ) : (
+            {
               <div
-                onClick={() => setEditRedCount(!editRedCount)}
+                onClick={() => undoRedCount()}
                 className="text-2xl text-cyan-600 max-md:ml-4 mt-4 font-bold"
               >
-                {stats[today]?.red ?? 0}
+                {stats[today]?.red.length ?? stats[today]?.red ?? 0}
               </div>
-            )}
+            }
           </div>
         )}
 
@@ -120,28 +118,18 @@ export default function App() {
           <div className="flex justify-between md:flex-col md:items-center">
             <button
               onClick={() => updateStat("green")}
-              className={`bg-green-500 py-4 min-w-[200px] text-lg font-extrabold text-slate-50 px-5 rounded ${
-                editGreenCount && "rounded-r-none"
-              }`}
+              className={`bg-green-500 py-4 min-w-[200px] text-lg font-extrabold text-slate-50 px-5 rounded`}
             >
               {greenButtonLabel}
             </button>
-            {editGreenCount ? (
-              <input
-                type="number"
-                autoFocus
-                className="w-12 text-2xl text-center border-green-500 border-2 rounded-r"
-                defaultValue={stats[today]?.green}
-                onBlur={updateGreenCount}
-              />
-            ) : (
+            {
               <div
-                onClick={() => setEditGreenCount(!editGreenCount)}
+                onClick={() => undoGreenCount()}
                 className="text-2xl text-cyan-600 max-md:ml-4 mt-4 font-bold"
               >
-                {stats[today]?.green ?? 0}
+                {stats[today]?.green.length ?? stats[today]?.green ?? 0}
               </div>
-            )}
+            }
           </div>
         )}
       </div>

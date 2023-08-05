@@ -7,8 +7,8 @@ export function ImportButton() {
   const today = new Date(Date.now()).toLocaleDateString();
   const [_, setStats] = useLocalStorage("myStats", {
     [today]: {
-      red: 0,
-      green: 0,
+      red: [],
+      green: [],
     },
   });
 

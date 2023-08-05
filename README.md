@@ -4,8 +4,6 @@ A simple app that helps you track a habit, when you followed through, and when y
 
 Built with React, TailwindCSS and Vite.
 
-## TODO
+# Deployment
 
-[] Navngiv vane
-[] Flere vaner - tabs
-[] Reset knap
+`vercel --prod`

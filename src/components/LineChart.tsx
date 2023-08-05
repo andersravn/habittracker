@@ -53,14 +53,20 @@ export default function App({
       label: "Red",
       data: days.map((date) => ({
         date: formatDate(date),
-        pushes: stats[formatDate(date)]?.red ?? 0,
+        pushes:
+          stats[formatDate(date)]?.red.length ??
+          stats[formatDate(date)]?.red ??
+          0,
       })),
     },
     {
       label: "Green",
       data: days.map((date) => ({
         date: formatDate(date),
-        pushes: stats[formatDate(date)]?.green ?? 0,
+        pushes:
+          stats[formatDate(date)]?.green.length ??
+          stats[formatDate(date)]?.green ??
+          0,
       })),
     },
   ];

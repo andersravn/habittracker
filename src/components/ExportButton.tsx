@@ -8,8 +8,8 @@ export function ExportButton() {
   const [copiable, setCopiable] = useState("");
   const [stats] = useLocalStorage("myStats", {
     [today]: {
-      red: 0,
-      green: 0,
+      red: [],
+      green: [],
     },
   });
 
@@ -18,6 +18,7 @@ export function ExportButton() {
     let data = Object.keys(stats).map(
       (date) => `${date},${stats[date].red},${stats[date].green}\n`
     );
+
     data.forEach((day) => {
       exportString += day;
     });
