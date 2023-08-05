@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { AxisOptions, Chart } from "react-charts";
 import { ErrorBoundary } from "react-error-boundary";
+import { eachDayOfInterval, subDays } from "date-fns";
+import { formatDate } from "../utils/formatDate";
 
 type DailyPushes = {
   date: string;
@@ -12,10 +14,26 @@ type Series = {
   data: DailyPushes[];
 };
 
-export default function App({ stats }: { stats: any }) {
+const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+export default function App({
+  stats,
+  daysToShow,
+}: {
+  stats: any;
+  daysToShow: number;
+}) {
+  const days = eachDayOfInterval({
+    start: subDays(new Date(), Math.abs(daysToShow) - 1),
+    end: new Date(),
+  });
+
   const primaryAxis = useMemo(
     (): AxisOptions<DailyPushes> => ({
-      getValue: (datum) => datum.date,
+      getValue: (datum) => {
+        const weekDay = weekDays[new Date(datum.date).getDay()];
+        return `${weekDay} ${new Date(datum.date).toLocaleDateString()}`;
+      },
     }),
     []
   );
@@ -33,16 +51,16 @@ export default function App({ stats }: { stats: any }) {
   const data: Series[] = [
     {
       label: "Red",
-      data: Object.keys(stats).map((date) => ({
-        date,
-        pushes: stats[date].red ?? 0,
+      data: days.map((date) => ({
+        date: formatDate(date),
+        pushes: stats[formatDate(date)]?.red ?? 0,
       })),
     },
     {
       label: "Green",
-      data: Object.keys(stats).map((date) => ({
-        date,
-        pushes: stats[date].green ?? 0,
+      data: days.map((date) => ({
+        date: formatDate(date),
+        pushes: stats[formatDate(date)]?.green ?? 0,
       })),
     },
   ];
@@ -56,7 +74,7 @@ export default function App({ stats }: { stats: any }) {
       >
         <Chart
           options={{
-            data,
+            data: data.slice(-7),
             primaryAxis,
             secondaryAxes,
             defaultColors: ["rgb(239 68 68)", "rgb(34 197 94)"],

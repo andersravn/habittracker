@@ -3,6 +3,7 @@ import { useState } from "react";
 import LineChart from "./components/LineChart";
 import { ExportButton } from "./components/ExportButton";
 import { ImportButton } from "./components/ImportButton";
+import { formatDate } from "./utils/formatDate";
 
 export default function App() {
   const [redButtonLabel, setRedButtonLabel] = useLocalStorage(
@@ -17,7 +18,9 @@ export default function App() {
   const [editRedCount, setEditRedCount] = useState(false);
   const [editGreenCount, setEditGreenCount] = useState(false);
 
-  const today = new Date(Date.now()).toLocaleDateString();
+  const [daysToShow, setDaysToShow] = useState(-30);
+  const date = new Date(Date.now());
+  const today = formatDate(date);
   const [stats, setStats] = useLocalStorage("myStats", {
     [today]: {
       red: 0,
@@ -150,7 +153,39 @@ export default function App() {
           {editMode ? "Done" : "Edit button texts"}
         </button>
       </div>
-      <LineChart stats={stats} />
+      <LineChart stats={stats} daysToShow={daysToShow} />
+      <div className="space-x-4">
+        <button
+          className="text-cyan-600 text-sm"
+          onClick={() => setDaysToShow(-7)}
+        >
+          7 days
+        </button>
+        {Object.keys(stats).length > 6 && (
+          <button
+            className="text-cyan-600 text-sm"
+            onClick={() => setDaysToShow(-14)}
+          >
+            14 days
+          </button>
+        )}
+        {Object.keys(stats).length > 13 && (
+          <button
+            className="text-cyan-600 text-sm"
+            onClick={() => setDaysToShow(-30)}
+          >
+            30 days
+          </button>
+        )}
+        {Object.keys(stats).length > 29 && (
+          <button
+            className="text-cyan-600 text-sm"
+            onClick={() => setDaysToShow(-365)}
+          >
+            365 days
+          </button>
+        )}
+      </div>
       <ExportButton />
       <ImportButton />
     </div>
