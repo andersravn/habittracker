@@ -18,7 +18,7 @@ export default function App() {
   );
   const [editMode, setEditMode] = useState(false);
 
-  const [view, setView] = useState<"overview" | "days">("days");
+  const [view, setView] = useState<"overview" | "days">("overview");
 
   const { stats, setStats, today } = useStats();
 
