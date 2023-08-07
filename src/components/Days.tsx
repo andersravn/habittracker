@@ -48,7 +48,7 @@ export function Days() {
         elementType: "line",
       },
     ],
-    []
+    [stats]
   );
 
   const data: Series[] = [
@@ -124,7 +124,9 @@ export function Days() {
                   selectedDay === day && "font-bold"
                 }`}
               >
-                <button onClick={() => selectDay(day)}>{day}</button>
+                <button onClick={() => selectDay(day)}>
+                  {new Date(day.replaceAll(".", "/")).toLocaleDateString()}
+                </button>
               </li>
             );
           })}
