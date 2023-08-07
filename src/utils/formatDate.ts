@@ -1,3 +1,5 @@
-export function formatDate(date: Date): string {
-  return `${date.getMonth() + 1}.${date.getDate()}.${date.getFullYear()}`;
+export function formatDate(date: Date, seperator: string = "."): string {
+  return `${
+    date.getMonth() + 1
+  }${seperator}${date.getDate()}${seperator}${date.getFullYear()}`;
 }

@@ -5,7 +5,7 @@ import { eachDayOfInterval, subDays } from "date-fns";
 import { formatDate } from "../utils/formatDate";
 
 type DailyPushes = {
-  date: string;
+  date: Date;
   pushes: number;
 };
 
@@ -52,7 +52,7 @@ export default function App({
     {
       label: "Red",
       data: days.map((date) => ({
-        date: formatDate(date),
+        date: date,
         pushes:
           stats[formatDate(date)]?.red.length ??
           stats[formatDate(date)]?.red ??
@@ -62,7 +62,7 @@ export default function App({
     {
       label: "Green",
       data: days.map((date) => ({
-        date: formatDate(date),
+        date: date,
         pushes:
           stats[formatDate(date)]?.green.length ??
           stats[formatDate(date)]?.green ??

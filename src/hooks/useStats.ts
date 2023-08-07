@@ -3,7 +3,7 @@ import { useLocalStorage } from "./useLocalStorage";
 
 export function useStats() {
   const date = new Date(Date.now());
-  const today = formatDate(date);
+  const today = formatDate(date, ".");
   const [stats, setStats] = useLocalStorage("myStats", {
     [today]: {
       red: [],

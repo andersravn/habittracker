@@ -24,10 +24,6 @@ export function Days() {
     }
   }, [stats]);
 
-  useEffect(() => {
-    console.log(stats[selectedDay]);
-  }, [selectedDay]);
-
   const hoursInDay = useMemo(
     (): number[] => [
       0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
@@ -59,7 +55,10 @@ export function Days() {
     {
       label: "Red",
       data: hoursInDay.map((hour) => ({
-        time: setHours(new Date(selectedDay), hour).toLocaleTimeString(),
+        time: setHours(
+          new Date(selectedDay.replaceAll(".", "/")),
+          hour
+        ).toLocaleTimeString(),
         pushes:
           stats[selectedDay]?.red?.filter((push: string) => {
             const pushDate = new Date(push);
@@ -76,7 +75,10 @@ export function Days() {
     {
       label: "Green",
       data: hoursInDay.map((hour) => ({
-        time: setHours(new Date(selectedDay), hour).toLocaleTimeString(),
+        time: setHours(
+          new Date(selectedDay.replaceAll(".", "/")),
+          hour
+        ).toLocaleTimeString(),
         pushes:
           stats[selectedDay]?.green?.filter((push: string) => {
             const pushDate = new Date(push);
@@ -93,7 +95,7 @@ export function Days() {
   ];
 
   return (
-    <div className="w-full">
+    <div>
       <div className="relative aspect-square h-96">
         <ErrorBoundary
           fallbackRender={() => (
