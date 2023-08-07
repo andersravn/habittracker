@@ -1,11 +1,9 @@
 import { useState } from "react";
-import useCopyToClipboard from "../hooks/useCopyToClipboard";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 
 export function ExportButton() {
-  const [_, copy] = useCopyToClipboard();
   const today = new Date(Date.now()).toLocaleDateString();
-  const [copiable, setCopiable] = useState("");
+  const [doExport, setExport] = useState(false);
   const [stats] = useLocalStorage("myStats", {
     [today]: {
       red: [],
@@ -13,33 +11,15 @@ export function ExportButton() {
     },
   });
 
-  function exportStats() {
-    let exportString = "date,red,green\n";
-    let data = Object.keys(stats).map(
-      (date) => `${date},${stats[date].red},${stats[date].green}\n`
-    );
-
-    data.forEach((day) => {
-      exportString += day;
-    });
-    console.log(exportString);
-    setCopiable(exportString);
-    copy(exportString).then(() => {
-      alert(
-        "Copied data as CSV to your clipboard. (If it didn't work, you can copy it manually below the export button.)"
-      );
-    });
-  }
-
   return (
     <div className="flex flex-col">
-      <button className="p-4 text-cyan-600" onClick={exportStats}>
+      <button className="p-4 text-cyan-600" onClick={() => setExport(true)}>
         Export data
       </button>
-      {copiable && (
+      {doExport && (
         <textarea
           className="border-2"
-          defaultValue={copiable?.trim() as string}
+          defaultValue={JSON.stringify(stats)}
           rows={5}
         ></textarea>
       )}

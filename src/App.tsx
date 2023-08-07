@@ -1,10 +1,11 @@
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { useState } from "react";
-import LineChart from "./components/LineChart";
 import { ExportButton } from "./components/ExportButton";
 import { ImportButton } from "./components/ImportButton";
-import { formatDate } from "./utils/formatDate";
 import { getClickTime } from "./utils/getClickTime";
+import Overview from "./components/Overview";
+import { Days } from "./components/Days";
+import { useStats } from "./hooks/useStats";
 
 export default function App() {
   const [redButtonLabel, setRedButtonLabel] = useLocalStorage(
@@ -17,15 +18,9 @@ export default function App() {
   );
   const [editMode, setEditMode] = useState(false);
 
-  const [daysToShow, setDaysToShow] = useState(-30);
-  const date = new Date(Date.now());
-  const today = formatDate(date);
-  const [stats, setStats] = useLocalStorage("myStats", {
-    [today]: {
-      red: [],
-      green: [],
-    },
-  });
+  const [view, setView] = useState<"overview" | "days">("days");
+
+  const { stats, setStats, today } = useStats();
 
   function updateStat(color: string) {
     let _stats = { ...stats };
@@ -39,8 +34,6 @@ export default function App() {
       };
     }
 
-    console.log(_stats);
-
     _stats = {
       ..._stats,
       [today]: {
@@ -48,7 +41,6 @@ export default function App() {
         [color]: [..._stats[today][color], getClickTime()],
       },
     };
-    console.log(_stats);
 
     setStats(_stats);
   }
@@ -141,39 +133,23 @@ export default function App() {
           {editMode ? "Done" : "Edit button texts"}
         </button>
       </div>
-      <LineChart stats={stats} daysToShow={daysToShow} />
-      <div className="space-x-4">
+      <div className="space-x-8">
         <button
-          className="text-cyan-600 text-sm"
-          onClick={() => setDaysToShow(-7)}
+          className={`text-cyan-600 text-sm ${
+            view === "overview" && "font-bold"
+          }`}
+          onClick={() => setView("overview")}
         >
-          7 days
+          Overview
         </button>
-        {Object.keys(stats).length > 6 && (
-          <button
-            className="text-cyan-600 text-sm"
-            onClick={() => setDaysToShow(-14)}
-          >
-            14 days
-          </button>
-        )}
-        {Object.keys(stats).length > 13 && (
-          <button
-            className="text-cyan-600 text-sm"
-            onClick={() => setDaysToShow(-30)}
-          >
-            30 days
-          </button>
-        )}
-        {Object.keys(stats).length > 29 && (
-          <button
-            className="text-cyan-600 text-sm"
-            onClick={() => setDaysToShow(-365)}
-          >
-            365 days
-          </button>
-        )}
+        <button
+          className={`text-cyan-600 text-sm ${view === "days" && "font-bold"}`}
+          onClick={() => setView("days")}
+        >
+          Days
+        </button>
       </div>
+      {view === "days" ? <Days /> : <Overview />}
       <ExportButton />
       <ImportButton />
     </div>
