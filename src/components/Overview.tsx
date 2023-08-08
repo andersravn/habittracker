@@ -1,10 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import LineChart from "./OverviewLineChart";
-import { useStats } from "../hooks/useStats";
 
-export default function Overview() {
+export default function Overview({ stats }: { stats: any }) {
   const [daysToShow, setDaysToShow] = useState(-30);
-  const { stats } = useStats();
 
   return (
     <>

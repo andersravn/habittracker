@@ -6,6 +6,7 @@ import { getClickTime } from "./utils/getClickTime";
 import Overview from "./components/Overview";
 import { Days } from "./components/Days";
 import { useStats } from "./hooks/useStats";
+import { formatDate } from "./utils/formatDate";
 
 export default function App() {
   const [redButtonLabel, setRedButtonLabel] = useLocalStorage(
@@ -20,7 +21,14 @@ export default function App() {
 
   const [view, setView] = useState<"overview" | "days">("overview");
 
-  const { stats, setStats, today } = useStats();
+  const date = new Date(Date.now());
+  const today = formatDate(date, ".");
+  const [stats, setStats] = useLocalStorage("myStats", {
+    [today]: {
+      red: [],
+      green: [],
+    },
+  });
 
   function updateStat(color: string) {
     let _stats = { ...stats };
@@ -149,7 +157,7 @@ export default function App() {
           Days
         </button>
       </div>
-      {view === "days" ? <Days /> : <Overview />}
+      {view === "days" ? <Days stats={stats} /> : <Overview stats={stats} />}
       <ExportButton />
       <ImportButton />
     </div>

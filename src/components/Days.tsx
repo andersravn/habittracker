@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useStats } from "../hooks/useStats";
 import { ErrorBoundary } from "react-error-boundary";
 import { AxisOptions, Chart } from "react-charts";
 import { isSameHour, setHours } from "date-fns";
@@ -14,8 +13,7 @@ type Series = {
   data: DailyPushes[];
 };
 
-export function Days() {
-  const { stats } = useStats();
+export function Days({ stats }: { stats: any }) {
   const [selectedDay, selectDay] = useState("");
 
   useEffect(() => {

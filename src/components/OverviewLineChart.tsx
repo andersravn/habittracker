@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { AxisOptions, Chart } from "react-charts";
 import { ErrorBoundary } from "react-error-boundary";
 import { eachDayOfInterval, subDays } from "date-fns";
@@ -16,7 +16,7 @@ type Series = {
 
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-export default function App({
+export default function OverviewLineChart({
   stats,
   daysToShow,
 }: {
@@ -35,7 +35,7 @@ export default function App({
         return `${weekDay} ${new Date(datum.date).toLocaleDateString()}`;
       },
     }),
-    []
+    [stats]
   );
 
   const secondaryAxes = useMemo(
@@ -45,7 +45,7 @@ export default function App({
         elementType: "line",
       },
     ],
-    []
+    [stats]
   );
 
   const data: Series[] = [
