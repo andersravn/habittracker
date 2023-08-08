@@ -5,7 +5,6 @@ import { ImportButton } from "./components/ImportButton";
 import { getClickTime } from "./utils/getClickTime";
 import Overview from "./components/Overview";
 import { Days } from "./components/Days";
-import { useStats } from "./hooks/useStats";
 import { formatDate } from "./utils/formatDate";
 
 export default function App() {
